@@ -42,32 +42,6 @@ module SimpleWorker
         super
       end
 
-      def check_for_file(f)
-        f = f.to_str
-        unless ends_with?(f, ".rb")
-          f << ".rb"
-        end
-        exists = false
-        if File.exist? f
-          exists = true
-        else
-          # try relative
-          #          p caller
-          f2 = File.join(File.dirname(caller[3]), f)
-#          puts 'f2=' + f2
-          if File.exist? f2
-            exists = true
-            f = f2
-          end
-        end
-        unless exists
-          raise "File not found: " + f
-        end
-        f = File.expand_path(f)
-        require f
-        f
-      end
-
       # merges the specified gem.
       def merge_gem(gem_name, version=nil)
         gem_info = {:name=>gem_name, :merge=>true}
@@ -82,7 +56,7 @@ module SimpleWorker
 
       #merge action_mailer mailers
       def merge_mailer(mailer, params={})
-        check_for_file mailer
+        SimpleWorker.check_for_file mailer
         basename = File.basename(mailer, File.extname(mailer))
         path_to_templates = params[:path_to_templates] || File.join(Rails.root, "app/views/#{basename}")
         @merged_mailers << {:name=>basename, :path_to_templates=>path_to_templates, :filename => mailer}.merge!(params)
@@ -91,7 +65,7 @@ module SimpleWorker
       def merge_folder(path)
         files = []
         Dir["#{path}*.rb"].each do |f|
-          f = check_for_file(f)
+          f = SimpleWorker.check_for_file(f)
           files<<f
         end
         @merged_folders[path]=files unless files.empty?
@@ -102,7 +76,7 @@ module SimpleWorker
       # todo: don't allow multiple files per merge, just one like require
       def merge(*files)
         files.each do |f|
-          f = check_for_file(f)
+          f = SimpleWorker.check_for_file(f)
           @merged << f
         end
       end
@@ -111,7 +85,7 @@ module SimpleWorker
       # where a lot of things are auto-merged by default like your models.
       def unmerge(*files)
         files.each do |f|
-          f = check_for_file(f)
+          f = SimpleWorker.check_for_file(f)
           @unmerged << f
         end
       end

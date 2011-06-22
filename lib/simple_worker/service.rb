@@ -13,17 +13,20 @@ module SimpleWorker
     attr_accessor :config
 
     def initialize(access_key, secret_key, options={})
+      start_time = Time.now
       SimpleWorker.logger.info 'Starting SimpleWorker::Service...'
       if options[:config]
         self.config = options[:config]
       else
-        c = SimpleWorker::Config.new unless self.config
+        c = self.config || SimpleWorker::Config.new 
         c.access_key = access_key
         c.secret_key = secret_key
         self.config = c
       end
       super("http://api.simpleworker.com/api/", access_key, secret_key, options)
       self.host = self.config.host if self.config && self.config.host
+      end_time = Time.now
+      SimpleWorker.logger.info "SimpleWorker started. Duration: #{((end_time.to_f-start_time.to_f) * 1000.0).to_i} ms"
     end
 
     # Options:
@@ -51,8 +54,23 @@ module SimpleWorker
         return
       end
 
+      # add global requires merges from SimpleWorker.require_relative calls
+      merged_files = []
+      if SimpleWorker.merged_files && SimpleWorker.merged_files.size > 0
+        SimpleWorker.merged_files.each do |mf|
+          merged_files << mf
+        end
+      end
+      merged_files.concat(options[:merge])
+      merged_gems = []
+       if SimpleWorker.merged_gems && SimpleWorker.merged_gems.size > 0
+        SimpleWorker.merged_gems.each do |mg|
+          merged_gems << mg
+        end
+      end
+      merged_gems.concat(options[:merged_gems])
 
-      zip_filename = build_merged_file(filename, options[:merge], options[:unmerge], options[:merged_gems], options[:merged_mailers], options[:merged_folders])
+      zip_filename = build_merged_file(filename, merged_files, options[:unmerge], merged_gems, options[:merged_mailers], options[:merged_folders])
 
 #            sys.classes[subclass].__file__
 #            puts '__FILE__=' + Base.subclass.__file__.to_s
