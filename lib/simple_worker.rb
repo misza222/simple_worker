@@ -35,9 +35,9 @@ module SimpleWorker
 
     def require_relative(s)
       puts 'SimpleWorker.require_relative ' + s
-      Kernel.require_relative(s)
       @merged_files ||= []
       f = SimpleWorker.check_for_file(s)
+      Kernel.require_relative(f)
       @merged_files << f
     end
 
