@@ -1,4 +1,4 @@
-
+SimpleWorker.require "gmail_xoauth"
 class AwesomeJob < SimpleWorker::Base
   merge_gem 'dropbox' # , '1.2.3'
   # bumpdsfsdfdsfasdf
@@ -9,6 +9,20 @@ class AwesomeJob < SimpleWorker::Base
       s = Dropbox::Session.new('...', '...')
     rescue => ex
       log "Dropbox doesn't like it when you don't have keys"
+    end
+
+    begin
+      smtp = Net::SMTP.new('smtp.gmail.com', 587)
+      smtp.enable_starttls_auto
+      secret = {
+          :two_legged => true,
+          :consumer_key => 'a',
+          :consumer_secret => 'b'
+      }
+      smtp.start('gmail.com', 'myemail@mydomain.com', secret, :xoauth)
+      smtp.finish
+    rescue =>ex
+      log "wwrong keys for gmail #{ex.inspect}"
     end
 #    s.mode = :dropbox
 #    s.authorizing_user = 'email@gmail.com'

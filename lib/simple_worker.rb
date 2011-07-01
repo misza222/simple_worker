@@ -42,7 +42,7 @@ module SimpleWorker
     end
 
     def require(gem_name, version=nil)
-      puts 'SimpleWorker.require ' + s
+      puts 'SimpleWorker.require ' + gem_name
       @merged_gems ||= []
       gem_info = {:name=>gem_name, :merge=>true}
       if version.is_a?(Hash)

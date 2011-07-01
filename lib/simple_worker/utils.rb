@@ -2,7 +2,7 @@ module SimpleWorker
 
   def self.check_for_file(f)
         f = f.to_str
-        unless ends_with?(f, ".rb")
+        unless f.end_with?(".rb")
           f << ".rb"
         end
         exists = false
@@ -22,7 +22,7 @@ module SimpleWorker
           raise "File not found: " + f
         end
         f = File.expand_path(f)
-        require f
+        Kernel.require f
         f
       end
 

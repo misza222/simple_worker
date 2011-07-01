@@ -61,14 +61,14 @@ module SimpleWorker
           merged_files << mf
         end
       end
-      merged_files.concat(options[:merge])
+      merged_files.concat(options[:merge]||[])
       merged_gems = []
        if SimpleWorker.merged_gems && SimpleWorker.merged_gems.size > 0
         SimpleWorker.merged_gems.each do |mg|
           merged_gems << mg
         end
-      end
-      merged_gems.concat(options[:merged_gems])
+       end
+      merged_gems.concat(options[:merged_gems]||[])
 
       zip_filename = build_merged_file(filename, merged_files, options[:unmerge], merged_gems, options[:merged_mailers], options[:merged_folders])
 
