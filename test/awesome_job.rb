@@ -1,7 +1,8 @@
-SimpleWorker.require "gmail_xoauth"
+SimpleWorker.require_gem "gmail_xoauth"
 class AwesomeJob < SimpleWorker::Base
   merge_gem 'dropbox' # , '1.2.3'
   # bumpdsfsdfdsfasdf
+  require 'active_model'
   merge_gem 'mongoid_i18n', :require => 'mongoid/i18n'
 
   def run

@@ -10,8 +10,9 @@ class TestGems < TestBase
     worker.queue
 
     wait_for_task(worker)
-
-    puts 'log=' + worker.get_log
+    log =  worker.get_log
+    puts 'log=' + log
+    assert log.include?("SMTPAuthenticationError"),"failed to merge gmail gem" # gmail authentification failed
 
   end
 

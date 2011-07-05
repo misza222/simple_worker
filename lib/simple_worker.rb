@@ -41,7 +41,7 @@ module SimpleWorker
       @merged_files << f
     end
 
-    def require(gem_name, version=nil)
+    def require_gem(gem_name, version=nil)
       puts 'SimpleWorker.require ' + gem_name
       @merged_gems ||= []
       gem_info = {:name=>gem_name, :merge=>true}
@@ -51,7 +51,7 @@ module SimpleWorker
         gem_info[:version] = version
       end
       @merged_gems << gem_info
-      Kernel.require gem_info[:require] || gem_name
+      require gem_info[:require] || gem_name
     end
 
   end

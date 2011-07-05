@@ -44,6 +44,8 @@ class SimpleWorkerTests < TestBase
       sleep 2
     end
 
+    log = tw.get_log
+    puts 'log=' + log.inspect
     assert tw.status["status"] == "complete"
 
   end
